@@ -232,6 +232,27 @@ main{min-width:0}
 .pcard .foot{text-align:center;font-size:.8rem;color:var(--muted);margin-top:18px;letter-spacing:.08em;text-transform:uppercase;font-weight:800}
 .pcard .acts{display:flex;justify-content:center;gap:10px;margin-top:18px}
 
+/* Login */
+.login{position:fixed;inset:0;z-index:80;display:none;place-items:center;padding:20px;background:var(--paper);
+  background-image:radial-gradient(circle at 15% 15%,rgba(196,66,47,.12),transparent 45%),radial-gradient(circle at 85% 85%,rgba(35,128,122,.12),transparent 45%)}
+.login.on{display:grid}
+.lcard{background:var(--paper2);border:1px solid var(--line);box-shadow:var(--shadow);border-radius:28px;padding:40px 44px 30px;width:min(440px,100%);text-align:center}
+.lcard h1{font-size:2.6rem;font-weight:900;margin:.2em 0 0;line-height:1}
+.ltag{color:var(--muted);font-weight:700;margin:.3em 0 1em}
+.lpoem{font-family:Fraunces,serif;font-style:italic;font-size:1.15rem;color:var(--ink2);margin-bottom:22px}
+.gbtn{display:inline-flex;align-items:center;justify-content:center;gap:12px;width:100%;padding:14px 18px;border-radius:14px;border:2px solid var(--line);background:#fff;font-weight:800;font-size:1.05rem;color:var(--ink);transition:.15s}
+.gbtn:hover:not(:disabled){border-color:var(--ink);transform:translateY(-1px)}
+.gbtn:disabled{opacity:.55;cursor:default}
+.lstatus{min-height:1.4em;margin-top:12px;font-weight:700;font-size:.92rem;color:var(--muted)}
+.lstatus.err{color:#9b2b1c}
+.lnote{font-size:.82rem;color:var(--muted);margin:14px 0 0}
+.user{display:flex;align-items:center;gap:10px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.1)}
+.user:empty{display:none}
+.user img,.user .av{width:34px;height:34px;border-radius:50%;flex:0 0 34px}
+.user .av{display:grid;place-items:center;background:var(--C);color:#fff;font-weight:900}
+.user .un{min-width:0;display:flex;flex-direction:column}
+.user b{color:#fff;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.user button{background:none;border:0;padding:0;color:#cbbfa8;text-decoration:underline;font-size:.8rem;text-align:left}
 .toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%) translateY(120px);background:var(--ink);color:#fff;padding:12px 20px;border-radius:14px;font-weight:700;transition:.3s;z-index:60}
 .toast.on{transform:translateX(-50%) translateY(0)}
 .conf{position:fixed;top:-20px;width:10px;height:14px;z-index:70;pointer-events:none;animation:fall linear forwards}
@@ -294,6 +315,7 @@ main{min-width:0}
       <button data-go="antologia"><span class="num">6</span><span class="t">Antología</span></button>
     </nav>
     <div class="prog">
+      <div class="user" id="userBox"></div>
       <div><b id="progTxt">0 de 5 estrellas</b></div>
       <div class="bar"><i id="progBar"></i></div>
       <div style="margin-top:8px" id="progLvl">Nivel: Aprendiz</div>
@@ -518,6 +540,26 @@ main{min-width:0}
   </main>
 </div>
 
+<div class="login on" id="login">
+  <div class="lcard">
+    <svg width="64" height="64" viewBox="0 0 40 40" aria-hidden="true">
+      <circle cx="20" cy="20" r="19" fill="#c4422f"/>
+      <g fill="none" stroke="#f6ecda" stroke-width="2.2" stroke-linecap="round"><ellipse cx="17" cy="25" rx="7" ry="7.5"/><path d="M21 19 L31 9"/><path d="M29 7l4 4"/></g>
+      <circle cx="17" cy="25" r="2.2" fill="#f6ecda"/>
+    </svg>
+    <h1>Endecimados</h1>
+    <p class="ltag">Taller de canto a lo poeta</p>
+    <div class="lpoem">Diez versos, ocho sílabas<br>y una rima que suena<br>como guitarra.</div>
+    <button class="gbtn" id="btnGoogle" disabled>
+      <svg width="20" height="20" viewBox="0 0 48 48" aria-hidden="true"><path fill="#EA4335" d="M24 9.5c3.5 0 6.6 1.2 9.1 3.6l6.8-6.8C35.8 2.4 30.3 0 24 0 14.6 0 6.6 5.4 2.7 13.3l7.9 6.1C12.5 13.6 17.8 9.5 24 9.5z"/><path fill="#4285F4" d="M46.5 24.5c0-1.6-.1-3.1-.4-4.5H24v9h12.7c-.6 2.9-2.2 5.4-4.7 7.1l7.6 5.9c4.4-4.1 6.9-10.1 6.9-17.5z"/><path fill="#FBBC05" d="M10.6 28.6c-.5-1.4-.8-3-.8-4.6s.3-3.2.8-4.6l-7.9-6.1C1 16.6 0 20.2 0 24s1 7.4 2.7 10.7l7.9-6.1z"/><path fill="#34A853" d="M24 48c6.5 0 11.9-2.1 15.9-5.8l-7.6-5.9c-2.1 1.4-4.9 2.3-8.3 2.3-6.2 0-11.5-4.1-13.4-9.9l-7.9 6.1C6.6 42.6 14.6 48 24 48z"/></svg>
+      Entrar con Google
+    </button>
+    <button class="btn alt sm" id="btnDemo" style="display:none;margin-top:10px">Probar sin cuenta (solo en este computador)</button>
+    <div class="lstatus" id="loginStatus">Preparando…</div>
+    <p class="lnote">Usamos tu cuenta solo para guardar tus estrellas y tus décimas, y que las encuentres en cualquier computador. No publicamos nada.</p>
+  </div>
+</div>
+
 <div class="modal" id="modal">
   <div class="pcard" id="pcard"></div>
 </div>
@@ -689,7 +731,9 @@ function rhymesFor(word){
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const esc=s=>String(s).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const shuffle=a=>{a=a.slice();for(let i=a.length-1;i>0;i--){const j=Math.random()*(i+1)|0;[a[i],a[j]]=[a[j],a[i]]}return a};
-const store={get(k,d){try{const v=localStorage.getItem('decima.'+k);return v?JSON.parse(v):d}catch(e){return d}},set(k,v){try{localStorage.setItem('decima.'+k,JSON.stringify(v))}catch(e){}}};
+/* Los datos viven en memoria y se sincronizan con la cuenta del usuario (Firestore) vía window.cloudSave */
+const clone=v=>JSON.parse(JSON.stringify(v));
+const store={data:{},get(k,d){const v=this.data[k];return v===undefined?d:clone(v)},set(k,v){this.data[k]=clone(v);if(window.cloudSave)window.cloudSave(k,this.data[k])}};
 function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove('on'),2600)}
 function confetti(){const cols=['#c4422f','#23807a','#c98712','#5a4bb0','#f6ecda'];for(let i=0;i<70;i++){const s=document.createElement('i');s.className='conf';s.style.left=Math.random()*100+'vw';s.style.background=cols[i%5];s.style.animationDuration=(1.6+Math.random()*1.6)+'s';s.style.animationDelay=(Math.random()*.4)+'s';s.style.borderRadius=Math.random()>.5?'50%':'2px';document.body.appendChild(s);setTimeout(()=>s.remove(),3800)}}
 function lastWord(line){const m=(line||'').match(/[A-Za-zÁÉÍÓÚÜÑáéíóúüñ]+/g);return m?m[m.length-1]:''}
@@ -705,7 +749,7 @@ function poemHTML(lines,{hover=false,letters=true}={}){
 
 /* Estrellas / progreso */
 const STARS=['que','historia','silabas','rimas','escribir'];
-let stars=store.get('stars',{});
+let stars={};
 function award(k){
   if(stars[k]) return; stars[k]=true; store.set('stars',stars); renderStars();
   confetti(); toast('⭐ ¡Ganaste una estrella!');
@@ -896,7 +940,8 @@ function bankRender(){
 $('#bankIn').oninput=bankRender; bankRender();
 
 // 5. Editor
-let ed=store.get('draft',{title:'',author:'',lines:Array(10).fill(''),mode:'libre',pie:''});
+const blankDraft=()=>({title:'',author:'',lines:Array(10).fill(''),mode:'libre',pie:''});
+let ed=blankDraft();
 let focusI=0;
 $('#themes').innerHTML=TEMAS.map(t=>`<button>${t}</button>`).join('');
 $$('#themes button').forEach(b=>b.onclick=()=>{$('#edTitle').value=b.textContent;ed.title=b.textContent;save();toast('Tema elegido: '+b.textContent)});
@@ -1000,10 +1045,6 @@ $('#btnSave').onclick=()=>{
   toast('📖 Guardada en tu antología');
 };
 $('#btnCard').onclick=()=>openCard({t:ed.title||'Mi décima',a:ed.author,l:ed.lines});
-// cargar borrador
-$('#edTitle').value=ed.title||'';$('#edAuthor').value=ed.author||'';
-inputs.forEach((inp,i)=>inp.value=ed.lines[i]||'');
-setMode(ed.mode||'libre');
 
 // Tarjeta
 function openCard(p){
@@ -1031,8 +1072,67 @@ document.addEventListener('click',e=>{
   if(d&&confirm('¿Borrar esta décima de tu antología?')){const m=store.get('mine',[]);m.splice(+d.dataset.del,1);store.set('mine',m);renderAnto()}
 });
 
-renderStars();
-go(store.get('view','inicio'));
+/* Arranque: se llama cuando el usuario ya inició sesión y se cargaron sus datos */
+window.startApp=function(user,data){
+  store.data=data||{};
+  stars=store.get('stars',{});
+  ed=Object.assign(blankDraft(),store.get('draft',{}));
+  if(!ed.author&&user&&user.name) ed.author=user.name.split(' ')[0];
+  $('#edTitle').value=ed.title||'';$('#edAuthor').value=ed.author||'';
+  inputs.forEach((inp,i)=>inp.value=ed.lines[i]||'');
+  wasComplete=true; setMode(ed.mode||'libre');
+  renderStars(); go(store.get('view','inicio'));
+  const n=user&&user.name?user.name:'Invitado';
+  $('#userBox').innerHTML=`${user&&user.photo?`<img src="${esc(user.photo)}" alt="" referrerpolicy="no-referrer">`:`<span class="av">${esc(n[0].toUpperCase())}</span>`}<div class="un"><b>${esc(n)}</b>${user&&user.logout?'<button id="btnLogout">Cerrar sesión</button>':''}</div>`;
+  if(user&&user.logout) $('#btnLogout').onclick=user.logout;
+  $('#login').classList.remove('on');
+  if(user&&user.name) toast('¡Hola, '+user.name.split(' ')[0]+'! 🎸');
+};
+</script>
+<script type="module">
+/* ============ INICIO DE SESIÓN CON GOOGLE (Firebase) ============ */
+const FB='https://www.gstatic.com/firebasejs/10.12.2/';
+const status=(t,err)=>{const s=document.getElementById('loginStatus');s.innerHTML=t;s.className='lstatus'+(err?' err':'')};
+const btn=document.getElementById('btnGoogle');
+const isLocal=['localhost','127.0.0.1'].includes(location.hostname);
+let cfg=null;
+try{({FIREBASE_CONFIG:cfg}=await import('./firebase-config.js'))}catch(e){}
+const configured=cfg&&cfg.apiKey&&!cfg.apiKey.startsWith('PEGA');
+
+if(location.protocol==='file:'){
+  btn.disabled=true;
+  status('Para iniciar sesión, abre la app desde su enlace:<br><b>agazmuri-ui.github.io/Cantoalopoeta</b>',true);
+}else if(!configured){
+  btn.disabled=true;
+  status('Falta conectar la app con Firebase (archivo <code>firebase-config.js</code>).',true);
+  if(isLocal){const d=document.getElementById('btnDemo');d.style.display='';d.onclick=()=>startApp({name:'Invitado de prueba'},{})}
+}else{
+  const [{initializeApp},A,F]=await Promise.all([import(FB+'firebase-app.js'),import(FB+'firebase-auth.js'),import(FB+'firebase-firestore.js')]);
+  const app=initializeApp(cfg), auth=A.getAuth(app), db=F.getFirestore(app);
+  const provider=new A.GoogleAuthProvider(); provider.setCustomParameters({prompt:'select_account'});
+  btn.onclick=async()=>{
+    btn.disabled=true; status('Abriendo la ventana de Google…');
+    try{await A.signInWithPopup(auth,provider)}
+    catch(e){btn.disabled=false; status(e.code==='auth/popup-closed-by-user'?'Cerraste la ventana. Inténtalo de nuevo.':'No se pudo iniciar sesión ('+(e.code||e.message)+').',true)}
+  };
+  let started=false;
+  A.onAuthStateChanged(auth,async u=>{
+    if(!u){ if(started) location.reload(); btn.disabled=false; status(''); return }
+    if(started) return; started=true;
+    status('Cargando tu cuaderno de cantor…');
+    const ref=F.doc(db,'users',u.uid);
+    let data={};
+    try{const s=await F.getDoc(ref); if(s.exists()) data=s.data().app||{}}
+    catch(e){status('No pude cargar tus datos ('+(e.code||e.message)+').',true); started=false; return}
+    let pending={}, timer=null;
+    const flush=()=>{const p=pending; pending={}; timer=null;
+      F.setDoc(ref,{app:p,nombre:u.displayName||'',actualizado:F.serverTimestamp()},{merge:true})
+       .catch(e=>{Object.assign(p,pending);pending=p;console.error(e)})};
+    window.cloudSave=(k,v)=>{pending[k]=v; clearTimeout(timer); timer=setTimeout(flush,800)};
+    window.addEventListener('beforeunload',()=>{if(timer){clearTimeout(timer);flush()}});
+    startApp({name:u.displayName,photo:u.photoURL,logout:()=>{if(timer)flush();A.signOut(auth)}},data);
+  });
+}
 </script>
 </body>
 </html>
