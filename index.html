@@ -880,8 +880,10 @@ const PISTAS=[
  ['cr','Aquí se cantan <b>décimas campesinas</b>… ¡en Centroamérica, entre Nicaragua y Panamá!']
 ];
 const P=Object.fromEntries(PAISES.map(p=>[p.id,p]));
-/* Grabaciones (videos de YouTube incrustados; no se copian ni se alojan aquí) */
-const VIDEOS={
+/* Grabaciones (videos de YouTube incrustados; no se copian ni se alojan aquí).
+   La lista se lee del Google Sheet "Endecimados · Videos del mapa"; VIDEOS_RESPALDO se usa si no se puede leer. */
+const SHEET_VIDEOS='https://docs.google.com/spreadsheets/d/1k5DFjZzgIV4_C6HuvX05A3kC6mF2oet5rsyCmmDrqFg/gviz/tq?tqx=out:csv&sheet=Videos';
+const VIDEOS_RESPALDO={
  cl:[{id:'MnHJ8_Cg2LI',t:'Canto a lo divino con guitarrón chileno',a:'Juan Pérez'},{id:'biZqUtWvT_s',t:'Canto a lo divino',a:'Los Guitarroneros de Pirque'}],
  cu:[{id:'OtZ1hUSdLJo',t:'Controversia de punto guajiro',a:'Juan A. Díaz y Robertico García'}],
  pr:[{id:'4kwQVibL4u0',t:'Seis con décimas',a:'Chuito el de Bayamón'}],
@@ -894,7 +896,28 @@ const VIDEOS={
  co:[{id:'8q-LJ6X0I7s',t:'Trova paisa sencilla',a:'Trovador Pimentón'}],
  br:[{id:'hQetUg4ohk0',t:'Desafío de cantoria, viola y repente',a:'Repentistas de Fortaleza'}]
 };
-$('#map').insertAdjacentHTML('beforeend',PAISES.map(p=>`<button class="pin${VIDEOS[p.id]?' aud':''}" data-pin="${p.id}" title="${p.n}${VIDEOS[p.id]?' · tiene grabación':''}" style="left:${p.x/691*100}%;top:${p.y/889*100}%"></button>`).join(''));
+let VIDEOS=VIDEOS_RESPALDO;
+$('#map').insertAdjacentHTML('beforeend',PAISES.map(p=>`<button class="pin" data-pin="${p.id}" style="left:${p.x/691*100}%;top:${p.y/889*100}%"></button>`).join(''));
+function marcarPinesConAudio(){PAISES.forEach(p=>{const b=pinEl(p.id);b.classList.toggle('aud',!!VIDEOS[p.id]);b.title=p.n+(VIDEOS[p.id]?' · tiene grabación':'')})}
+function parseCSV(t){const rows=[];let r=[],c='',q=false;for(let i=0;i<t.length;i++){const ch=t[i];if(q){if(ch==='"'){if(t[i+1]==='"'){c+='"';i++}else q=false}else c+=ch}else if(ch==='"')q=true;else if(ch===','){r.push(c);c=''}else if(ch==='\n'||ch==='\r'){if(ch==='\r'&&t[i+1]==='\n')i++;r.push(c);rows.push(r);r=[];c=''}else c+=ch}if(c!==''||r.length){r.push(c);rows.push(r)}return rows}
+function ytId(s){s=(s||'').trim();const m=s.match(/(?:v=|youtu\.be\/|shorts\/|embed\/|live\/)([\w-]{11})/);return m?m[1]:(/^[\w-]{11}$/.test(s)?s:null)}
+const normPais=s=>strip((s||'').trim().toLowerCase());
+async function cargarVideosDelSheet(){
+  try{
+    const res=await fetch(SHEET_VIDEOS+'&_='+Date.now()); if(!res.ok) throw new Error(res.status);
+    const txt=await res.text(); if(/^\s*</.test(txt)) throw new Error('sin acceso');
+    const [head,...rows]=parseCSV(txt); const col=n=>head.findIndex(h=>normPais(h).startsWith(n));
+    const iP=col('pais'),iT=col('titulo'),iA=col('interprete'),iE=col('enlace'),iM=col('mostrar');
+    const byName=Object.fromEntries(PAISES.map(p=>[normPais(p.n),p.id]));
+    const v={};
+    rows.forEach(r=>{const id=byName[normPais(r[iP])], yt=ytId(r[iE]);
+      if(!id||!yt||normPais(r[iM])==='no') return;
+      (v[id]=v[id]||[]).push({id:yt,t:(r[iT]||'').trim()||'Décima cantada',a:(r[iA]||'').trim()})});
+    VIDEOS=v;
+  }catch(e){console.warn('Videos: uso la lista de respaldo ('+e.message+')')}
+  marcarPinesConAudio();
+  const sel=$('.pin.sel'); if(mapMode==='explorar'&&sel) explorarPanel(sel.dataset.pin);
+}
 function playerHTML(id){
   const vs=VIDEOS[id];
   if(!vs) return `<div class="novid">🎙️ Todavía no tenemos una grabación de ${P[id].n}. ¿Conoces una? Cuéntale a tu profe.</div>`;
@@ -943,6 +966,8 @@ $$('#mapSeg button').forEach(b=>b.onclick=()=>{
   if(mapMode==='explorar') explorarPanel(); else newGame();
 });
 explorarPanel();
+marcarPinesConAudio();
+cargarVideosDelSheet();
 
 // 3. Sílabas
 const exs=[["ex1","bajo la luna de plata"],["ex2","con mi guitarra en la mano"],["ex3","canta el gallo en el corral"]];
