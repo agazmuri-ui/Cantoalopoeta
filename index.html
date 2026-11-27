@@ -257,6 +257,18 @@ main{min-width:0}
 .lstatus{min-height:1.4em;margin-top:12px;font-weight:700;font-size:.92rem;color:var(--muted)}
 .lstatus.err{color:#9b2b1c}
 .lnote{font-size:.82rem;color:var(--muted);margin:14px 0 0}
+/* Logos de los colegios */
+.colegios{margin-top:20px;padding-top:16px;border-top:1px solid var(--line)}
+.colegios .clab{font-size:.72rem;font-weight:900;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);margin-bottom:10px}
+.clogos{display:flex;justify-content:center;align-items:flex-start;gap:16px}
+.clogos img{width:58px;height:58px;border-radius:50%;background:#fff;object-fit:contain;display:block;box-shadow:0 1px 4px rgba(0,0,0,.12)}
+.colegios.big{margin-top:36px;padding:26px 0 6px;text-align:center}
+.colegios.big .clogos{gap:40px}
+.colegios.big img{width:86px;height:86px;margin:0 auto}
+.colegios.big figure{margin:0;width:130px}
+.colegios.big figcaption{font-size:.82rem;font-weight:800;color:var(--ink2);margin-top:8px}
+.clogos.sm{gap:10px;margin-bottom:10px}
+.clogos.sm img{width:40px;height:40px;box-shadow:none}
 .user{display:flex;align-items:center;gap:10px;margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,.1)}
 .user:empty{display:none}
 .user img,.user .av{width:34px;height:34px;border-radius:50%;flex:0 0 34px}
@@ -360,6 +372,14 @@ main{min-width:0}
       <div class="card station" data-go="escribir"><span class="ico">✍️</span><div class="n">5</div><h3>Escribe tu décima</h3><p>El taller te ayuda verso a verso, contando sílabas y revisando rimas.</p></div>
       <div class="card station" data-go="antologia"><span class="ico">📖</span><div class="n">6</div><h3>Antología</h3><p>Décimas de la tradición y las que tú vayas escribiendo.</p></div>
     </div>
+    <footer class="colegios big">
+      <div class="clab">Un taller de los colegios del Movimiento Apostólico Manquehue</div>
+      <div class="clogos">
+        <figure><img src="logos/san-benito.jpg" alt=""><figcaption>Colegio San Benito</figcaption></figure>
+        <figure><img src="logos/san-anselmo.png" alt=""><figcaption>Colegio San Anselmo</figcaption></figure>
+        <figure><img src="logos/san-lorenzo.png" alt=""><figcaption>Colegio San Lorenzo</figcaption></figure>
+      </div>
+    </footer>
   </section>
 
   <!-- ============ 1. QUÉ ES ============ -->
@@ -568,6 +588,14 @@ main{min-width:0}
     <button class="btn alt sm" id="btnDemo" style="display:none;margin-top:10px">Probar sin cuenta (solo en este computador)</button>
     <div class="lstatus" id="loginStatus">Preparando…</div>
     <p class="lnote">Usamos tu cuenta solo para guardar tus estrellas y tus décimas, y que las encuentres en cualquier computador. No publicamos nada.</p>
+    <div class="colegios">
+      <div class="clab">Colegios del Movimiento Apostólico Manquehue</div>
+      <div class="clogos">
+        <img src="logos/san-benito.jpg" alt="Colegio San Benito">
+        <img src="logos/san-anselmo.png" alt="Colegio San Anselmo">
+        <img src="logos/san-lorenzo.png" alt="Colegio San Lorenzo">
+      </div>
+    </div>
   </div>
 </div>
 
@@ -1109,7 +1137,7 @@ $('#btnCard').onclick=()=>openCard({t:ed.title||'Mi décima',a:ed.author,l:ed.li
 // Tarjeta
 function openCard(p){
   const ls=p.l.map(x=>x||'');
-  $('#pcard').innerHTML=`<h2>${esc(p.t)}</h2><div class="by">${p.a?'por '+esc(p.a):''}</div><div class="poem">${ls.slice(0,4).map(l=>`<div>${esc(l)||'&nbsp;'}</div>`).join('')}${ls.slice(4).map(l=>`<div>${esc(l)||'&nbsp;'}</div>`).join('')}</div><div class="foot">Endecimados · Taller de canto a lo poeta</div><div class="acts"><button class="btn sm" onclick="window.print()">🖨️ Imprimir</button><button class="btn sm alt" onclick="closeCard()">Cerrar</button></div>`;
+  $('#pcard').innerHTML=`<h2>${esc(p.t)}</h2><div class="by">${p.a?'por '+esc(p.a):''}</div><div class="poem">${ls.slice(0,4).map(l=>`<div>${esc(l)||'&nbsp;'}</div>`).join('')}${ls.slice(4).map(l=>`<div>${esc(l)||'&nbsp;'}</div>`).join('')}</div><div class="foot"><div class="clogos sm"><img src="logos/san-benito.jpg" alt="Colegio San Benito"><img src="logos/san-anselmo.png" alt="Colegio San Anselmo"><img src="logos/san-lorenzo.png" alt="Colegio San Lorenzo"></div>Endecimados · Taller de canto a lo poeta</div><div class="acts"><button class="btn sm" onclick="window.print()">🖨️ Imprimir</button><button class="btn sm alt" onclick="closeCard()">Cerrar</button></div>`;
   $('#modal').classList.add('on');
 }
 function closeCard(){$('#modal').classList.remove('on')}
