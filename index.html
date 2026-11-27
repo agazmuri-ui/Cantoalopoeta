@@ -170,6 +170,17 @@ input.field:focus{border-color:var(--ink)}
 .flagsm{width:22px;border-radius:3px;vertical-align:-2px}
 .pinfo h3{font-size:1.6rem;margin:.2em 0 .1em}
 .pinfo .estilo{font-family:Fraunces,serif;font-style:italic;color:var(--red);font-size:1.15rem;margin-bottom:8px}
+.pin.aud::after{content:"♪";position:absolute;top:-12px;right:-12px;width:18px;height:18px;border-radius:50%;background:var(--ink);color:#fff;font:900 11px/18px Nunito,sans-serif;text-align:center}
+.notebadge{display:inline-block;width:20px;height:20px;border-radius:50%;background:var(--ink);color:#fff;font-weight:900;font-size:12px;line-height:20px;text-align:center}
+.listen{margin-top:14px;border-top:1px solid var(--line);padding-top:12px}
+.listen .lh{font-weight:900;margin-bottom:8px}
+.vid{position:relative;aspect-ratio:16/9;border-radius:12px;overflow:hidden;background:#000;cursor:pointer}
+.vid img{width:100%;height:100%;object-fit:cover;display:block;opacity:.85;transition:.15s}
+.vid:hover img{opacity:1}
+.vid .play{position:absolute;inset:0;margin:auto;width:62px;height:62px;border-radius:50%;background:var(--red);color:#fff;display:grid;place-items:center;font-size:24px;padding-left:4px;box-shadow:0 6px 20px rgba(0,0,0,.35)}
+.vid iframe{width:100%;height:100%;border:0;display:block}
+.vcap{font-size:.88rem;margin:6px 0 12px;color:var(--ink2)}
+.novid{margin-top:12px;background:var(--paper3);border-radius:12px;padding:12px 14px;font-size:.92rem;color:var(--ink2)}
 .clue{font-family:Fraunces,serif;font-size:1.35rem;font-style:italic;background:var(--paper3);border-radius:14px;padding:14px 16px;margin:8px 0 12px}
 @media (max-width:1180px){.mapwrap{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}}
 @media (max-width:980px){.mapwrap{grid-template-columns:1fr}.mapside{position:static}}
@@ -768,6 +779,7 @@ function go(view){
   $$('.nav button').forEach(b=>b.classList.toggle('on',b.dataset.go===view));
   window.scrollTo({top:0,behavior:'smooth'});
   if(view==='antologia') renderAnto();
+  if(view!=='historia') $$('#v-historia .vid iframe').forEach(f=>{const v=f.parentNode;v.innerHTML=`<img src="https://i.ytimg.com/vi/${v.dataset.vid}/hqdefault.jpg" alt=""><span class="play">▶</span>`});
   store.set('view',view);
 }
 document.addEventListener('click',e=>{const b=e.target.closest('[data-go]');if(b){go(b.dataset.go)}});
@@ -868,13 +880,36 @@ const PISTAS=[
  ['cr','Aquí se cantan <b>décimas campesinas</b>… ¡en Centroamérica, entre Nicaragua y Panamá!']
 ];
 const P=Object.fromEntries(PAISES.map(p=>[p.id,p]));
-$('#map').insertAdjacentHTML('beforeend',PAISES.map(p=>`<button class="pin" data-pin="${p.id}" title="${p.n}" style="left:${p.x/691*100}%;top:${p.y/889*100}%"></button>`).join(''));
+/* Grabaciones (videos de YouTube incrustados; no se copian ni se alojan aquí) */
+const VIDEOS={
+ cl:[{id:'MnHJ8_Cg2LI',t:'Canto a lo divino con guitarrón chileno',a:'Juan Pérez'},{id:'biZqUtWvT_s',t:'Canto a lo divino',a:'Los Guitarroneros de Pirque'}],
+ cu:[{id:'OtZ1hUSdLJo',t:'Controversia de punto guajiro',a:'Juan A. Díaz y Robertico García'}],
+ pr:[{id:'4kwQVibL4u0',t:'Seis con décimas',a:'Chuito el de Bayamón'}],
+ mx:[{id:'dGzekZykVMw',t:'Versada con "Jarabe Loco"',a:'Rubén Vázquez, Ramón Gutiérrez y José Tereso Vega'}],
+ pa:[{id:'xGpp8wAeWHQ',t:'Mejorana: torrente de pasitrote',a:'Décima panameña'}],
+ ve:[{id:'-C8JbSqxRCU',t:'Contrapunteo llanero',a:'Jorge Guerrero y El Tigrito de Matanegra'}],
+ pe:[{id:'yIw8P88qhAQ',t:'Al compás del socavón',a:'Nicomedes Santa Cruz'}],
+ ar:[{id:'xWoVTZF_Hnc',t:'La cifra y la milonga',a:'David Tokar'}],
+ uy:[{id:'SA5KjXcFtns',t:'Payada',a:'Cacho Artigas (Uruguay) y Emanuel Gabotto (Argentina)'}],
+ co:[{id:'8q-LJ6X0I7s',t:'Trova paisa sencilla',a:'Trovador Pimentón'}],
+ br:[{id:'hQetUg4ohk0',t:'Desafío de cantoria, viola y repente',a:'Repentistas de Fortaleza'}]
+};
+$('#map').insertAdjacentHTML('beforeend',PAISES.map(p=>`<button class="pin${VIDEOS[p.id]?' aud':''}" data-pin="${p.id}" title="${p.n}${VIDEOS[p.id]?' · tiene grabación':''}" style="left:${p.x/691*100}%;top:${p.y/889*100}%"></button>`).join(''));
+function playerHTML(id){
+  const vs=VIDEOS[id];
+  if(!vs) return `<div class="novid">🎙️ Todavía no tenemos una grabación de ${P[id].n}. ¿Conoces una? Cuéntale a tu profe.</div>`;
+  return `<div class="listen"><div class="lh">🎵 Escucha cómo suena</div>`+vs.map((v,k)=>`<div class="vid" data-vid="${v.id}"><img src="https://i.ytimg.com/vi/${v.id}/hqdefault.jpg" alt="" loading="lazy"><span class="play">▶</span></div><div class="vcap"><b>${esc(v.t)}</b><br>${esc(v.a)}</div>`).join('')+`<div class="muted" style="font-size:.78rem">Video de YouTube. Se carga al apretar ▶.</div></div>`;
+}
+document.addEventListener('click',e=>{
+  const v=e.target.closest('.vid[data-vid]'); if(!v||v.querySelector('iframe')) return;
+  v.innerHTML=`<iframe src="https://www.youtube-nocookie.com/embed/${v.dataset.vid}?autoplay=1&rel=0&modestbranding=1" title="Video" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+});
 let mapMode='explorar', seen=new Set(), game=null;
 function pinEl(id){return $(`[data-pin="${id}"]`)}
 function explorarPanel(id){
   const p=id&&P[id];
-  $('#mapPanel').innerHTML=(p?`<div class="pinfo"><img class="flagbig" src="https://flagcdn.com/w80/${p.id}.png" alt="Bandera de ${p.n}"><h3>${p.n}</h3><div class="estilo">${p.e}</div><p>${p.d}</p></div>`
-    :`<h3>Viaja por América</h3><p>Haz clic en los círculos del mapa para descubrir cómo se canta la décima en cada país.</p><div class="hint">La décima nació en <b>España</b> <img class="flagsm" src="https://flagcdn.com/w40/es.png" alt=""> y desde ahí cruzó el mar.</div>`)
+  $('#mapPanel').innerHTML=(p?`<div class="pinfo"><img class="flagbig" src="https://flagcdn.com/w80/${p.id}.png" alt="Bandera de ${p.n}"><h3>${p.n}</h3><div class="estilo">${p.e}</div><p>${p.d}</p>${playerHTML(p.id)}</div>`
+    :`<h3>Viaja por América</h3><p>Haz clic en los círculos del mapa para descubrir cómo se canta la décima en cada país. Los círculos con <span class="notebadge">♪</span> tienen una grabación para escuchar.</p><div class="hint">La décima nació en <b>España</b> <img class="flagsm" src="https://flagcdn.com/w40/es.png" alt=""> y desde ahí cruzó el mar.</div>`)
    +`<div class="muted mt" style="font-size:.9rem;font-weight:700">Países descubiertos: ${seen.size} de ${PAISES.length}</div><div class="meter">${PAISES.map(x=>`<i class="${seen.has(x.id)?'ok':''}"></i>`).join('')}</div>`
    +(seen.size===PAISES.length?`<div class="fbbox ok mt">🌎 ¡Recorriste toda América! Ahora prueba el <b>Desafío</b>.</div>`:'');
 }
